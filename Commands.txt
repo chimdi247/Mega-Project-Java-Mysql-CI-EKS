@@ -24,7 +24,7 @@ aws eks --region ap-south-1 update-kubeconfig --name devopsshack-cluster
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
- 
+
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 kubectl version --client
@@ -42,7 +42,7 @@ sudo mv eksctl /usr/local/bin
 
 eksctl version
 
--------------------------------------------------------------------------------------------	
+-------------------------------------------------------------------------------------------
 #Install HELM
 sudo apt update && sudo apt upgrade -y
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -71,9 +71,15 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main
 
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
 ---------------------------------------------------------------------------------------
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
 helm repo update
+
+service account secret
+
+kubectl get secret sa-secret \
+  -n webapps \
+  -o jsonpath='{.data.token}' | base64 -d
 
 
 ---
