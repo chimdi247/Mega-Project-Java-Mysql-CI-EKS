@@ -3,6 +3,7 @@ pipeline {
 
     tools {
         maven 'maven3'
+        jdk 'jdk21' 
     }
 
     environment {
@@ -13,7 +14,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'git', url: 'https://github.com/chimdi247/Mega-Project-Java-Mysql-CI-EKS.git'
+                git branch: 'main', url: 'https://github.com/chimdi247/Mega-Project-Java-Mysql-CI-EKS.git'
             }
         }
 
@@ -74,7 +75,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker-cred') {
-                        sh "docker build -t adijaiswal/bankapp:$IMAGE_TAG ."
+                        sh "docker build -t chimdi247/bankapp:$IMAGE_TAG ."
                     }
                 }
             }
@@ -82,7 +83,7 @@ pipeline {
 
         stage('Scan Image') {
             steps {
-                sh "trivy image --format table -o image-report.html adijaiswal/bankapp:$IMAGE_TAG"
+                sh "trivy image --format table -o image-report.html chimdi247/bankapp:$IMAGE_TAG"
             }
         }
 
@@ -90,7 +91,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker-cred') {
-                        sh "docker push adijaiswal/bankapp:$IMAGE_TAG"
+                        sh "docker push chimdi247/bankapp:$IMAGE_TAG"
                     }
                 }
             }
@@ -105,11 +106,11 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'git', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                         sh '''
                             # Clone the Mega-Project-CD repository
-                            git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/jaiswaladi246/Mega-Project-CD.git
+                            git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/chimdi247/Mega-Project-Java-Mysql-CD-EKS.git
 
                             # Update the image tag in the manifest.yaml file
-                            cd Mega-Project-CD
-                            sed -i "s|adijaiswal/bankapp:.*|adijaiswal/bankapp:${IMAGE_TAG}|" Manifest/manifest.yaml
+                            cd Mega-Project-Java-Mysql-CD-EKS
+                            sed -i "s|chimdi247/bankapp:.*|chimdi247/bankapp:${IMAGE_TAG}|" Manifest/manifest.yaml
 
                             # Confirm changes
                             echo "Updated manifest file contents:"
@@ -154,9 +155,9 @@ post {
             emailext (
                 subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
                 body: body,
-                to: '567adddi.jais@gmail.com',
-                from: 'jenkins@devopsshack.com',
-                replyTo: 'jenkins@devopsshack.com',
+                to: 'chimdi247@gmail.com',
+                from: 'chimdi247@gmail.com',
+                replyTo: 'jenkins@admin.com',
                 mimeType: 'text/html',
 
             )
